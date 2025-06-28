@@ -1,0 +1,252 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// USER MANAGEMENT & AUTHENTICATION
+
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  USER
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  password  String
+  firstName String?
+  lastName  String?
+  role      UserRole   @default(USER)
+  status    UserStatus @default(ACTIVE)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@map("users")
+}
+
+// CUSTOMER MANAGEMENT
+
+enum CustomerStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  TERMINATED
+}
+
+model Customer {
+  id               String         @id @default(cuid())
+  name             String
+  email            String         @unique
+  phone            String?
+  address          String?
+  connectionString String // Encrypted connection string to customer's DB
+  status           CustomerStatus @default(ACTIVE)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  // Relations
+  customerPackages CustomerPackage[]
+  usages           Usage[]
+  billings         Billing[]
+
+  @@map("customers")
+}
+
+// SERVICE MANAGEMENT
+
+enum ServiceStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum ServiceUnit {
+  COUNT      // Per request/transaction
+  GB         // Per gigabyte
+  HOUR       // Per hour
+  DAY        // Per day
+  MONTH      // Per month
+  USER       // Per user
+}
+
+model Service {
+  id          String        @id @default(cuid())
+  name        String        @unique
+  description String?
+  unit        ServiceUnit
+  basePrice   Decimal       @db.Decimal(10, 2)
+  status      ServiceStatus @default(ACTIVE)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  // Relations
+  packageServices PackageService[]
+  usages          Usage[]
+
+  @@map("services")
+}
+
+// PACKAGE MANAGEMENT
+
+enum PackageType {
+  FIXED      // Sabit - Fixed monthly fee
+  PAY_AS_GO  // Kullandıkça Öde - Pay per usage
+  CUSTOM     // Özel - Custom pricing
+}
+
+enum PackageStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model Package {
+  id          String        @id @default(cuid())
+  name        String        @unique
+  description String?
+  type        PackageType
+  basePrice   Decimal?      @db.Decimal(10, 2) // For FIXED type
+  status      PackageStatus @default(ACTIVE)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  // Relations
+  packageServices  PackageService[]
+  customerPackages CustomerPackage[]
+
+  @@map("packages")
+}
+
+// PACKAGE-SERVICE RELATIONS
+
+model PackageService {
+  id        String   @id @default(cuid())
+  packageId String
+  serviceId String
+  limit     Int?     // null = unlimited
+  price     Decimal? @db.Decimal(10, 2) // Override service base price
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  package Package @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@unique([packageId, serviceId])
+  @@map("package_services")
+}
+
+// CUSTOMER-PACKAGE RELATIONS
+
+enum CustomerPackageStatus {
+  ACTIVE
+  INACTIVE
+  PENDING
+  CANCELLED
+}
+
+model CustomerPackage {
+  id         String                @id @default(cuid())
+  customerId String
+  packageId  String
+  status     CustomerPackageStatus @default(PENDING)
+  startDate  DateTime              @default(now())
+  endDate    DateTime?
+  createdAt  DateTime              @default(now())
+  updatedAt  DateTime              @updatedAt
+
+  // Relations
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  package  Package  @relation(fields: [packageId], references: [id], onDelete: Cascade)
+
+  @@unique([customerId, packageId, status]) // One active package per customer per package type
+  @@map("customer_packages")
+}
+
+// USAGE TRACKING
+
+model Usage {
+  id         String   @id @default(cuid())
+  customerId String
+  serviceId  String
+  amount     Int      @default(0)
+  date       DateTime @default(now())
+  period     String   // YYYY-MM format for monthly aggregation
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  service  Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@unique([customerId, serviceId, period])
+  @@map("usages")
+}
+
+// BILLING MANAGEMENT
+
+enum BillingStatus {
+  PENDING
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+model Billing {
+  id         String        @id @default(cuid())
+  customerId String
+  amount     Decimal       @db.Decimal(10, 2)
+  period     String        // YYYY-MM format
+  status     BillingStatus @default(PENDING)
+  dueDate    DateTime
+  paidDate   DateTime?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  // Relations
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@unique([customerId, period])
+  @@map("billings")
+}
+
+// NOTIFICATION SYSTEM
+
+enum NotificationType {
+  LIMIT_WARNING
+  LIMIT_EXCEEDED
+  BILLING_DUE
+  BILLING_OVERDUE
+  PACKAGE_UPGRADE
+  PACKAGE_DOWNGRADE
+  SYSTEM_ALERT
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  FAILED
+}
+
+model Notification {
+  id         String             @id @default(cuid())
+  customerId String?
+  type       NotificationType
+  title      String
+  message    String
+  status     NotificationStatus @default(PENDING)
+  sentAt     DateTime?
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @updatedAt
+
+  @@map("notifications")
+}
