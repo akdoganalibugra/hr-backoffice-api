@@ -5,15 +5,15 @@ import { UserResponse } from '../common/types/user.types';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly database: DatabaseService) {}
+  constructor(private readonly db: DatabaseService) {}
 
   async findAll(): Promise<UserResponse[]> {
-    const users: UserResponse[] = await this.database.user.findMany();
+    const users: UserResponse[] = await this.db.user.findMany();
     return users;
   }
 
   async findOne(id: string): Promise<UserResponse> {
-    const user = await this.database.user.findUnique({
+    const user = await this.db.user.findUnique({
       where: { id },
     });
 
@@ -28,7 +28,7 @@ export class UsersService {
     id: string,
     updateUserDto: Prisma.UserUpdateInput,
   ): Promise<UserResponse> {
-    const updatedUser: UserResponse = await this.database.user.update({
+    const updatedUser: UserResponse = await this.db.user.update({
       where: { id },
       data: updateUserDto,
     });
@@ -37,7 +37,7 @@ export class UsersService {
   }
 
   async remove(id: string): Promise<{ message: string }> {
-    await this.database.user.delete({
+    await this.db.user.delete({
       where: { id },
     });
 

@@ -8,7 +8,6 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
 
-  // Global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -23,10 +22,10 @@ async function bootstrap() {
   await app.listen(port);
 
   console.log(
-    `🚀 HR Backoffice API running on: http://localhost:${port}/${configService.get('app.apiPrefix')}`,
+    `HR Backoffice API running on: http://localhost:${port}/${configService.get('app.apiPrefix')}`,
   );
-  console.log(`📊 Environment: ${configService.get('app.nodeEnv')}`);
-  console.log(`🔗 Database: Connected`);
+  console.log(`Environment: ${configService.get('app.nodeEnv')}`);
+  console.log(`Database: Connected`);
 }
 
 bootstrap();
