@@ -1,84 +1,185 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# HR SaaS Backoffice API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Kurumsal SaaS/HR hizmetleri için NestJS + Prisma + PostgreSQL altyapısı ile geliştirilmiş modüler backend API sistemi.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Proje Hakkında
 
-## Description
+Bu proje, kurumsal müşterilere HR hizmetleri sunan SaaS platformunun backoffice API'sini içermektedir. Sistem, temiz kod prensiplerine uygun olarak, gereksiz soyutlamalardan arındırılmış, doğrudan Prisma input tipleriyle çalışan modüler bir yapıda geliştirilmiştir.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Teknoloji Stack
 
-## Project setup
+- **Backend Framework:** NestJS
+- **Database:** PostgreSQL
+- **ORM:** Prisma
+- **Authentication:** JWT
+- **Password Hashing:** bcrypt
+- **Validation:** class-validator
+- **Environment Config:** @nestjs/config
+
+## Geliştirme Durumu ve Roadmap
+
+### ✅ Tamamlanan Modüller (AŞAMA 1 - MVP)
+
+#### 1. ✅ Proje Altyapısı (`feat/project-init`)
+
+- NestJS + Prisma + PostgreSQL kurulumu
+- Global database service, config servisi
+- Environment configuration (.env)
+- Merkezi hata yönetimi ve validation
+
+#### 2. ✅ Authentication & Users (`feat/auth-users`)
+
+- JWT tabanlı authentication sistemi
+- Kullanıcı kaydı, giriş ve profil yönetimi
+- bcrypt ile şifreleme
+- **API Endpoints:**
+  - `POST /auth/register` - Kullanıcı kaydı
+  - `POST /auth/login` - Kullanıcı girişi
+  - `GET /users/profile` - Kullanıcı profil bilgisi
+  - `PUT /users/profile` - Profil güncelleme
+
+#### 3. ✅ Customers Management (`feat/customers`)
+
+- Müşteri (şirket) CRUD işlemleri
+- Müşteri veritabanı bağlantı testi
+- JWT korumalı endpoints
+- **API Endpoints:**
+  - `GET /customers` - Müşteri listesi
+  - `GET /customers/:id` - Müşteri detayı
+  - `POST /customers` - Yeni müşteri ekleme
+  - `PUT /customers/:id` - Müşteri güncelleme
+  - `DELETE /customers/:id` - Müşteri silme
+  - `POST /customers/:id/test-connection` - DB bağlantı testi
+
+---
+
+### 🔄 Geliştirilmekte Olan Modüller
+
+#### 4. ⏳ Services Management (`services`)
+
+#### 5. ⏳ Package Management (`packages`)
+
+---
+
+### 📋 Planlanan Modüller (AŞAMA 1 - MVP Tamamlama)
+
+#### 6. 📌 Customer Package Assignment (`customer-packages`)
+
+#### 7. 📌 Usage Tracking (`usages`)
+
+#### 8. 📌 Basic Billing (`billings`)
+
+### 🚀 Gelişmiş Özellikler (AŞAMA 2)
+
+#### 9. 📋 Automated Usage Collection (`cron-usage-collector`)
+
+### ⚡ Performans ve İleri Düzey (AŞAMA 3)
+
+#### 10. 📋 Performance & Caching (`performance-caching`)
+
+- Redis cache entegrasyonu
+- Rate limiting
+
+#### 11. 📋 Background Jobs (`background-jobs`)
+
+- RabbitMQ/asenkron job işleme
+- Toplu işlemler ve bildirimler
+
+---
+
+### 🏗️ Teknik Altyapı Özellikleri
+
+- **Database**: PostgreSQL + Prisma ORM
+- **Architecture**: Modüler NestJS yapısı
+- **Security**: JWT authentication, bcrypt password hashing
+- **Validation**: Global validation pipeline
+- **Environment**: Secure .env configuration
+- **Data**: Türkçe seed data
+
+## Kurulum ve Çalıştırma
+
+### Gereksinimler
+
+- Node.js (v18+ önerilen)
+- PostgreSQL (v12+)
+- npm veya yarn
+
+### 1. Proje Kurulumu
 
 ```bash
-$ npm install
+# Projeyi klonla
+git clone <repository-url>
+cd hr-backoffice-api
+
+# Bağımlılıkları yükle
+npm install
 ```
 
-## Compile and run the project
+### 2. Veritabanı Kurulumu
 
 ```bash
-# development
-$ npm run start
+# .env dosyasını oluştur
+cp .env.example .env
 
-# watch mode
-$ npm run start:dev
+# .env dosyasını düzenle ve DATABASE_URL'i ayarla
+# DATABASE_URL="postgresql://username:password@localhost:5432/hr_backoffice_db"
 
-# production mode
-$ npm run start:prod
+# Prisma migration'larını çalıştır
+npx prisma migrate dev
+
+# Seed verilerini yükle (opsiyonel)
+npm run db:seed
 ```
 
-## Run tests
+### 3. Uygulamayı Çalıştır
 
 ```bash
-# unit tests
-$ npm run test
+# Development modda çalıştır
+npm run start:dev
 
-# e2e tests
-$ npm run test:e2e
+# Production modda çalıştır
+npm run start:prod
 
-# test coverage
-$ npm run test:cov
+# Build et
+npm run build
 ```
 
-## Resources
+### 4. Veritabanı Yönetimi
 
-Check out a few resources that may come in handy when working with NestJS:
+```bash
+# Prisma Studio'yu aç (veritabanını görselleştir)
+npx prisma studio
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+# Yeni migration oluştur
+npx prisma migrate dev --name <migration-name>
 
-## Support
+# Prisma client'ı yeniden oluştur
+npx prisma generate
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## API Dokümantasyonu
 
-## Stay in touch
+### Postman Collection
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+API'yi test etmek için hazır Postman collection dosyası:
+
+- **Dosya**: `docs/postman-collection.json`
+- **İçerik**: Tüm mevcut endpoint'ler, örnek seed data ile test senaryoları
+- **Kullanım**: Postman'a import edin ve test etmeye başlayın
+
+#### Postman Collection Özellikleri:
+
+- ✅ JWT token otomatik yönetimi (login sonrası otomatik set)
+- ✅ Environment variables (base_url, jwt_token)
+- ✅ Seed data ile test örnekleri
+- ✅ Tüm Auth, Users ve Customers endpoint'leri
+
+#### Hızlı Test Adımları:
+
+1. Postman'da `docs/postman-collection.json` dosyasını import edin
+2. `Test Data Examples` > `Login with Seed User (Admin)` ile giriş yapın
+3. Otomatik JWT token set edilecek
+4. Diğer endpoint'leri test edin
 
 ## License
 
